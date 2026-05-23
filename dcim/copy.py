@@ -6,7 +6,7 @@ from dcim.report import fmt_size
 from dcim.scanner import VideoRecord
 
 
-def copy_files(records: list[VideoRecord], dest: Path) -> None:
+def copy_files(records: list[VideoRecord], dest: Path, flat: bool = False) -> None:
     """Copy matched records to dest, organized into YYYY/MM/DD subfolders."""
     if not records:
         print("  No files to copy.")
@@ -20,7 +20,7 @@ def copy_files(records: list[VideoRecord], dest: Path) -> None:
 
     for i, rec in enumerate(records, 1):
         filename = rec.mtp_name if rec.mtp_name else rec.path.name
-        dest_dir = _dest_dir(rec, dest)
+        dest_dir = dest if flat else _dest_dir(rec, dest)
         dest_path = dest_dir / filename
 
         label = f"  [{i}/{len(records)}] {filename} ({fmt_size(rec.size_bytes)})"
@@ -57,7 +57,7 @@ def copy_files(records: list[VideoRecord], dest: Path) -> None:
                 print(f"\n  Error copying {filename}: {e}", file=sys.stderr)
 
     print()
-    print(f"  {copied} file(s) copied ({fmt_size(total_bytes)})  ·  {skipped} skipped (already at destination)")
+    print(f"  {copied} file(s) copied ({fmt_size(total_bytes)})  |  {skipped} skipped (already at destination)")
     if copied:
         print(f"  Destination: {dest}")
     print()

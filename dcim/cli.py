@@ -17,7 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
     extract.add_argument("--dest", metavar="PATH",
                          help="Destination folder for copied clips (required unless --dry-run)")
     extract.add_argument("--date", metavar="DATE",
-                         help="Date or range: 2026-05-18 | 2026-05-01:2026-05-18 | last-7-days | last-weekend")
+                         help="Date or range: 2026-05-18 | 2026-05-01:2026-05-18 | last-7-days | last-weekend | comma-separated: 2026-05-03,2026-05-13")
     extract.add_argument("--min-duration", metavar="DURATION",
                          help="Minimum clip length, e.g. 10s or 2m")
     extract.add_argument("--max-duration", metavar="DURATION",
@@ -35,6 +35,8 @@ def build_parser() -> argparse.ArgumentParser:
                          help="Frame rate, e.g. 240 | 120 | 30")
     extract.add_argument("--name", metavar="PATTERN",
                          help="Glob pattern on filename, e.g. \"IMG_42*\"")
+    extract.add_argument("--flat", action="store_true",
+                         help="Copy all files directly into --dest with no date subfolders")
     extract.add_argument("--dry-run", action="store_true",
                          help="Preview matched files without copying")
 
@@ -125,7 +127,7 @@ def _cmd_extract(args, parser) -> None:
         dest = Path(args.dest)
         if matched:
             print(f"\n  {len(matched)} file(s) matched. Copying to {dest} ...\n")
-        copy.copy_files(matched, dest)
+        copy.copy_files(matched, dest, flat=args.flat)
 
 
 def _cmd_scan(args) -> None:

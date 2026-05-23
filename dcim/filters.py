@@ -173,9 +173,12 @@ def _time_in_window(dt: datetime | None, window: str) -> bool:
 
 def apply_filters(records: list[VideoRecord], args: Namespace) -> list[VideoRecord]:
     """Apply all active filters from parsed CLI args. Returns matching records."""
-    date_range: tuple[date, date] | None = None
+    date_ranges: list[tuple[date, date]] = []
     if args.date:
-        date_range = parse_date_arg(args.date)
+        for token in args.date.split(","):
+            token = token.strip()
+            if token:
+                date_ranges.append(parse_date_arg(token))
 
     min_dur = parse_duration_arg(args.min_duration) if args.min_duration else None
     max_dur = parse_duration_arg(args.max_duration) if args.max_duration else None
@@ -186,13 +189,13 @@ def apply_filters(records: list[VideoRecord], args: Namespace) -> list[VideoReco
     no_date_count = 0
 
     for rec in records:
-        # Date filter
-        if date_range is not None:
+        # Date filter (OR across multiple ranges)
+        if date_ranges:
             if rec.date_shot is None:
                 no_date_count += 1
                 continue
             shot_date = rec.date_shot.date()
-            if not (date_range[0] <= shot_date <= date_range[1]):
+            if not any(r[0] <= shot_date <= r[1] for r in date_ranges):
                 continue
 
         # Duration filter
@@ -226,7 +229,7 @@ def apply_filters(records: list[VideoRecord], args: Namespace) -> list[VideoReco
 
         results.append(rec)
 
-    if no_date_count and date_range is not None:
+    if no_date_count and date_ranges:
         print(f"  Note: {no_date_count} file(s) had no date metadata and were excluded.")
 
     return results
