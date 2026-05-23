@@ -1,0 +1,21 @@
+CLAUDE.md
+.history/
+step-by-step.md
+prd.html
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Tool runtime artifacts
+.dcim_state
+manifest_*.csv
+
+# Personal / session-specific
+list_devices.ps1
+dcim.toml
