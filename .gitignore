@@ -19,3 +19,5 @@ manifest_*.csv
 # Personal / session-specific
 list_devices.ps1
 dcim.toml
+extracted-videos/
+extract_out.txt

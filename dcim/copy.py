@@ -26,7 +26,7 @@ def copy_files(records: list[VideoRecord], dest: Path) -> None:
         label = f"  [{i}/{len(records)}] {filename} ({fmt_size(rec.size_bytes)})"
 
         if dest_path.exists() and dest_path.stat().st_size == rec.size_bytes:
-            print(f"{label}  →  already exists, skipped")
+            print(f"{label}  ->already exists, skipped")
             skipped += 1
             continue
 
@@ -34,7 +34,7 @@ def copy_files(records: list[VideoRecord], dest: Path) -> None:
 
         if rec.mtp_device_id is not None:
             # MTP source — stream directly from device
-            print(f"{label}  →  downloading from device...", end="", flush=True)
+            print(f"{label}  ->downloading from device...", end="", flush=True)
             try:
                 from dcim.mtp import download_file
                 download_file(rec.mtp_device_id, rec.mtp_file, dest_path)
@@ -45,7 +45,7 @@ def copy_files(records: list[VideoRecord], dest: Path) -> None:
                 print(f"\n  Error downloading {filename}: {e}", file=sys.stderr)
         else:
             # Local source — regular file copy
-            print(f"{label}  →  copying...", end="", flush=True)
+            print(f"{label}  ->copying...", end="", flush=True)
             try:
                 shutil.copy2(rec.path, dest_path)
                 print("  done")
